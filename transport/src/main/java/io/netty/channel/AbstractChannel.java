@@ -556,7 +556,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                         "is not bound to a wildcard address; binding to a non-wildcard " +
                         "address (" + localAddress + ") anyway as requested.");
             }
-
+            //Channel是否激活，对于`NioServerSocketChannel`来说，在服务端启动的时候一定是未激活的(因为端口绑定未完成)
             boolean wasActive = isActive();
             try {
                 doBind(localAddress);
@@ -565,11 +565,13 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                 closeIfClosed();
                 return;
             }
-
+            //端口绑定完成会返回true
             if (!wasActive && isActive()) {
                 invokeLater(new Runnable() {
                     @Override
                     public void run() {
+                        //这里的`pipeline`是`DefaultChannelPipeline`实例对象，此pipeline的第一个节点是`HeadContext`
+                        //实际上调用的就是`HeadContext`的`channelActive()`方法
                         pipeline.fireChannelActive();
                     }
                 });

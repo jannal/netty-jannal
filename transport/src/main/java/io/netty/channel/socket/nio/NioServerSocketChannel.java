@@ -50,6 +50,11 @@ public class NioServerSocketChannel extends AbstractNioMessageChannel
 
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(NioServerSocketChannel.class);
 
+    /**
+     * 这里为什么不用`ServerSocketChannel.open()`来创建,而是使用缓存的`SelectorProvider`?
+     * `ServerSocketChannel`的`open()`方法:每个新`Channel`创建都需要`SelectorProvider.provider()`（包含synchronized块）。
+     * 当应用程序创建大量连接时，这可能会导致不必要的阻塞
+     */
     private static ServerSocketChannel newSocket(SelectorProvider provider) {
         try {
             /**
@@ -64,7 +69,7 @@ public class NioServerSocketChannel extends AbstractNioMessageChannel
                     "Failed to open a server socket.", e);
         }
     }
-
+    //每个`NioServerSocketChannel`实例都关联一个`NioServerSocketChannelConfig`
     private final ServerSocketChannelConfig config;
 
     /**

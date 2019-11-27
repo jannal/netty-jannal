@@ -355,7 +355,7 @@ abstract class AbstractChannelHandlerContext extends DefaultAttributeMap
             });
         }
     }
-
+    //调用下一个Handler的channelRead方法
     private void invokeChannelRead(Object msg) {
         if (invokeHandler()) {
             try {
@@ -690,6 +690,7 @@ abstract class AbstractChannelHandlerContext extends DefaultAttributeMap
     private void invokeRead() {
         if (invokeHandler()) {
             try {
+                //调用HeadContext的read(ChannelHandlerContext ctx)
                 ((ChannelOutboundHandler) handler()).read(this);
             } catch (Throwable t) {
                 notifyHandlerException(t);
@@ -936,7 +937,7 @@ abstract class AbstractChannelHandlerContext extends DefaultAttributeMap
         }
         return false;
     }
-
+    //获取ChannelHandlerContext下一个节点
     private AbstractChannelHandlerContext findContextInbound() {
         AbstractChannelHandlerContext ctx = this;
         do {
@@ -986,6 +987,7 @@ abstract class AbstractChannelHandlerContext extends DefaultAttributeMap
         // We must call setAddComplete before calling handlerAdded. Otherwise if the handlerAdded method generates
         // any pipeline events ctx.handler() will miss them because the state will not allow it.
         if (setAddComplete()) {
+            // 此处回调的就是childHandler中添加的ChannelInitializer的handlerAdded方法
             handler().handlerAdded(this);
         }
     }

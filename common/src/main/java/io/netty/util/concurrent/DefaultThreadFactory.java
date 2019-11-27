@@ -91,7 +91,7 @@ public class DefaultThreadFactory implements ThreadFactory {
             throw new IllegalArgumentException(
                     "priority: " + priority + " (expected: Thread.MIN_PRIORITY <= priority <= Thread.MAX_PRIORITY)");
         }
-
+        //命名规则poolName-1-xxx
         prefix = poolName + '-' + poolId.incrementAndGet() + '-';
         this.daemon = daemon;
         this.priority = priority;
@@ -121,6 +121,7 @@ public class DefaultThreadFactory implements ThreadFactory {
     }
 
     protected Thread newThread(Runnable r, String name) {
+        //默认通过FastThreadLocalThread创建，FastThreadLocalThread继承Thread
         return new FastThreadLocalThread(threadGroup, r, name);
     }
 }

@@ -199,8 +199,9 @@ public class DefaultChannelPipeline implements ChannelPipeline {
     public final ChannelPipeline addLast(EventExecutorGroup group, String name, ChannelHandler handler) {
         final AbstractChannelHandlerContext newCtx;
         synchronized (this) {
+            //检查ChannelHandler是否重复添加
             checkMultiplicity(handler);
-
+            //创建`ChannelHandlerContext`节点,
             newCtx = newContext(group, filterName(name, handler), handler);
 
             addLast0(newCtx);
@@ -209,6 +210,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
             // In this case we add the context to the pipeline and add a task that will call
             // ChannelHandler.handlerAdded(...) once the channel is registered.
             if (!registered) {
+                //设置Context为ADD_PENDING状态
                 newCtx.setAddPending();
                 callHandlerCallbackLater(newCtx, true);
                 return this;
@@ -605,6 +607,12 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         }
     }
 
+    /**
+     * 回调Handler处理器中的`handlerAdded()`方法(添加完成事件)。
+     * 在Netty低版本中是先回调`handlerAdded`后设置`ADD_COMPLETE`(添加完成状态)，
+     * 这样会有问题，如果`handlerAdded`方法生成任何Pipeline事件,将无法设置完成状态。
+     * 所以在高版本中时先设置状态后回调方法。
+     */
     private void callHandlerAdded0(final AbstractChannelHandlerContext ctx) {
         try {
             ctx.callHandlerAdded();

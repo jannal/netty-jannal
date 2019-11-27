@@ -21,6 +21,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+/**
+ * 如果开启优化(`-Dio.netty.noKeySetOptimization`),
+ * netty反射强制将`SelectorImpl`中的`selectedKeys`替换为优化版的`SelectedSelectionKeySet`对象,
+ * 这使`Selector`中所有对`selectedKeys`、`publicSelectedKeys`的操作实际上就是对`SelectedSelectionKeySet`的操作。
+ * `SelectedSelectionKeySet`本质是一个一维动态数组，每次扩充1倍容量
+ */
 final class SelectedSelectionKeySet extends AbstractSet<SelectionKey> {
 
     SelectionKey[] keys;
@@ -92,7 +98,7 @@ final class SelectedSelectionKeySet extends AbstractSet<SelectionKey> {
         Arrays.fill(keys, start, size, null);
         size = 0;
     }
-
+    //扩大一倍，从1024变为2048
     private void increaseCapacity() {
         SelectionKey[] newKeys = new SelectionKey[keys.length << 1];
         System.arraycopy(keys, 0, newKeys, 0, size);

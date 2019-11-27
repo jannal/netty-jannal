@@ -78,6 +78,7 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
      * {@link Channel}'s.
      */
     public ServerBootstrap group(EventLoopGroup parentGroup, EventLoopGroup childGroup) {
+        //初始化boss
         super.group(parentGroup);
         if (childGroup == null) {
             throw new NullPointerException("childGroup");
@@ -85,6 +86,7 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
         if (this.childGroup != null) {
             throw new IllegalStateException("childGroup set already");
         }
+        //初始化worker
         this.childGroup = childGroup;
         return this;
     }
@@ -137,6 +139,12 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
         return this;
     }
 
+    /**
+     * 1. 设置自定义的`ChannelOption`和`AttributeKey`
+     * 2. 设置自定义的`ChildChannelOption`和`ChildAttributeKey`
+     * 3. 设置`ChannelPipeline`
+     * 4. 添加`ServerBootstrapAcceptor`
+     */
     @Override
     void init(Channel channel) throws Exception {
         final Map<ChannelOption<?>, Object> options = options0();
@@ -209,6 +217,10 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
         return new Map.Entry[size];
     }
 
+    /**
+     *  这个 handler 的作用就是去添加我们自定义的 handler
+     *  ServerBootstrapAcceptor的主要作用就是接入器，专门接受新请求，把新的请求扔给某个事件循环器
+     */
     private static class ServerBootstrapAcceptor extends ChannelInboundHandlerAdapter {
 
         private final EventLoopGroup childGroup;
@@ -252,6 +264,7 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
             }
 
             try {
+                //注册channel到work线程池，操作完成关闭channel
                 childGroup.register(child).addListener(new ChannelFutureListener() {
                     @Override
                     public void operationComplete(ChannelFuture future) throws Exception {

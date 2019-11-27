@@ -383,12 +383,21 @@ public abstract class AbstractNioChannel extends AbstractChannel {
         boolean selected = false;
         for (;;) {
             try {
+                // jdk中SelectableChannel类的register(Selector sel, int ops, Object attachment)，
+                // 使用一个给定的Selector注册Channel。事件是0表示不关心任何事件(这里仅仅是将Channel绑定到Selector上)。
+                // this表示attachment，即Netty的AbstractNioChannel，当Selector轮询到当前javaChannel()上时，
+                // 可以通过attachment获取Netty的AbstractNioChannel。这是一个很巧妙的设计
                 selectionKey = javaChannel().register(eventLoop().unwrappedSelector(), 0, this);
                 return;
             } catch (CancelledKeyException e) {
+                //当试图使用不再SelectionKey时，抛出此异常。
                 if (!selected) {
                     // Force the Selector to select now as the "canceled" SelectionKey may still be
                     // cached and not removed because no Select.select(..) operation was called yet.
+
+                    //`SelectionKey`代表Channel与Selector的注册关系，可以调用`cancel()`取消这种关系,但是这种注销关系并不是立即生效，
+                    // 因为尚未调用Select.select(),所以一旦发现此异常，需要调用selectNow()让这种取消关系生效。
+                    //selectNow本身可能会抛出IOException，此处不处理
                     eventLoop().selectNow();
                     selected = true;
                 } else {
@@ -408,13 +417,15 @@ public abstract class AbstractNioChannel extends AbstractChannel {
     @Override
     protected void doBeginRead() throws Exception {
         // Channel.read() or ChannelHandlerContext.read() was called
+        //`this.selectionKey`是服务端注册时返回的`selectionKey`
         final SelectionKey selectionKey = this.selectionKey;
         if (!selectionKey.isValid()) {
             return;
         }
 
         readPending = true;
-
+        //获取感兴趣的事件，对于服务端，注册Channel之后，感兴趣的事件是0(即仅仅绑定而已)，
+        // 此处readInterestOp是OP_ACCEPT事件
         final int interestOps = selectionKey.interestOps();
         if ((interestOps & readInterestOp) == 0) {
             selectionKey.interestOps(interestOps | readInterestOp);

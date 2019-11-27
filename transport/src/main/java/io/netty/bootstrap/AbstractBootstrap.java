@@ -314,6 +314,11 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
         }
     }
 
+    /**
+     * 1. 新建一个Channel ，对于NioServerSocketChannel来说其实就是new NioServerSocketChannel()，只不过是通过反射创建的(ReflectiveChannelFactory)
+     * 2. init Channel
+     * 3
+     */
     final ChannelFuture initAndRegister() {
         Channel channel = null;
         try {

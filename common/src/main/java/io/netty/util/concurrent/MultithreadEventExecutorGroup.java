@@ -73,6 +73,7 @@ public abstract class MultithreadEventExecutorGroup extends AbstractEventExecuto
         }
 
         if (executor == null) {
+            //通过DefaultThreadFactory创建线程
             executor = new ThreadPerTaskExecutor(newDefaultThreadFactory());
         }
 
@@ -81,6 +82,7 @@ public abstract class MultithreadEventExecutorGroup extends AbstractEventExecuto
         for (int i = 0; i < nThreads; i ++) {
             boolean success = false;
             try {
+                //初始化nThreads个线程，并存放在children数组中，newChild是抽象方法，由子类实现
                 children[i] = newChild(executor, args);
                 success = true;
             } catch (Exception e) {
@@ -122,7 +124,7 @@ public abstract class MultithreadEventExecutorGroup extends AbstractEventExecuto
         for (EventExecutor e: children) {
             e.terminationFuture().addListener(terminationListener);
         }
-
+        //为children数组维护一个只读视图readonlyChildren，主要用于迭代。
         Set<EventExecutor> childrenSet = new LinkedHashSet<EventExecutor>(children.length);
         Collections.addAll(childrenSet, children);
         readonlyChildren = Collections.unmodifiableSet(childrenSet);
