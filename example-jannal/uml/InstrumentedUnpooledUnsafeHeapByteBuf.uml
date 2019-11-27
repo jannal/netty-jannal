@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>io.netty.buffer.UnpooledByteBufAllocator.InstrumentedUnpooledUnsafeHeapByteBuf</OriginalElement>
+  <nodes>
+    <node x="99.0" y="156.0">io.netty.buffer.AbstractByteBuf</node>
+    <node x="135.0" y="78.0">io.netty.buffer.ByteBuf</node>
+    <node x="0.0" y="468.0">io.netty.buffer.UnpooledByteBufAllocator.InstrumentedUnpooledUnsafeHeapByteBuf</node>
+    <node x="54.0" y="390.0">io.netty.buffer.UnpooledUnsafeHeapByteBuf</node>
+    <node x="213.0" y="0.0">java.lang.Comparable</node>
+    <node x="27.0" y="234.0">io.netty.buffer.AbstractReferenceCountedByteBuf</node>
+    <node x="3.0" y="0.0">io.netty.util.ReferenceCounted</node>
+    <node x="81.0" y="312.0">io.netty.buffer.UnpooledHeapByteBuf</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="io.netty.buffer.AbstractReferenceCountedByteBuf" target="io.netty.buffer.AbstractByteBuf">
+      <point x="0.0" y="-14.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="io.netty.buffer.UnpooledHeapByteBuf" target="io.netty.buffer.AbstractReferenceCountedByteBuf">
+      <point x="0.0" y="-14.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="io.netty.buffer.ByteBuf" target="io.netty.util.ReferenceCounted">
+      <point x="-27.25" y="-14.0" />
+      <point x="162.25" y="53.0" />
+      <point x="98.0" y="53.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="io.netty.buffer.AbstractByteBuf" target="io.netty.buffer.ByteBuf">
+      <point x="0.0" y="-14.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="io.netty.buffer.ByteBuf" target="java.lang.Comparable">
+      <point x="27.25" y="-14.0" />
+      <point x="216.75" y="53.0" />
+      <point x="281.0" y="53.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="io.netty.buffer.UnpooledUnsafeHeapByteBuf" target="io.netty.buffer.UnpooledHeapByteBuf">
+      <point x="0.0" y="-14.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="io.netty.buffer.UnpooledByteBufAllocator.InstrumentedUnpooledUnsafeHeapByteBuf" target="io.netty.buffer.UnpooledUnsafeHeapByteBuf">
+      <point x="0.0" y="-14.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="189.5" y="248.0" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

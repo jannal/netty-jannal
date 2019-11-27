@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>io.netty.buffer.UnpooledByteBufAllocator.InstrumentedUnpooledHeapByteBuf</OriginalElement>
+  <nodes>
+    <node x="96.0" y="156.0">io.netty.buffer.AbstractByteBuf</node>
+    <node x="132.0" y="78.0">io.netty.buffer.ByteBuf</node>
+    <node x="210.0" y="0.0">java.lang.Comparable</node>
+    <node x="24.0" y="234.0">io.netty.buffer.AbstractReferenceCountedByteBuf</node>
+    <node x="0.0" y="0.0">io.netty.util.ReferenceCounted</node>
+    <node x="24.0" y="390.0">io.netty.buffer.UnpooledByteBufAllocator.InstrumentedUnpooledHeapByteBuf</node>
+    <node x="78.0" y="312.0">io.netty.buffer.UnpooledHeapByteBuf</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="io.netty.buffer.AbstractReferenceCountedByteBuf" target="io.netty.buffer.AbstractByteBuf">
+      <point x="0.0" y="-14.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="io.netty.buffer.UnpooledHeapByteBuf" target="io.netty.buffer.AbstractReferenceCountedByteBuf">
+      <point x="0.0" y="-14.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="io.netty.buffer.ByteBuf" target="io.netty.util.ReferenceCounted">
+      <point x="-27.25" y="-14.0" />
+      <point x="159.25" y="53.0" />
+      <point x="95.0" y="53.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="io.netty.buffer.AbstractByteBuf" target="io.netty.buffer.ByteBuf">
+      <point x="0.0" y="-14.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="io.netty.buffer.ByteBuf" target="java.lang.Comparable">
+      <point x="27.25" y="-14.0" />
+      <point x="213.75" y="53.0" />
+      <point x="278.0" y="53.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="io.netty.buffer.UnpooledByteBufAllocator.InstrumentedUnpooledHeapByteBuf" target="io.netty.buffer.UnpooledHeapByteBuf">
+      <point x="0.0" y="-14.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="461.5" y="335.0" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

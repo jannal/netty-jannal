@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>io.netty.buffer.PoolArena.DirectArena</OriginalElement>
+  <nodes>
+    <node x="0.0" y="156.0">io.netty.buffer.PoolArena.DirectArena</node>
+    <node x="87.0" y="78.0">io.netty.buffer.PoolArena</node>
+    <node x="165.0" y="156.0">io.netty.buffer.PoolArena.HeapArena</node>
+    <node x="60.0" y="0.0">io.netty.buffer.PoolArenaMetric</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="io.netty.buffer.PoolArena.HeapArena" target="io.netty.buffer.PoolArena">
+      <point x="0.0" y="-14.0" />
+      <point x="228.5" y="131.0" />
+      <point x="182.25" y="131.0" />
+      <point x="31.75" y="14.0" />
+    </edge>
+    <edge source="io.netty.buffer.PoolArena" target="io.netty.buffer.PoolArenaMetric">
+      <point x="0.0" y="-14.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="io.netty.buffer.PoolArena.DirectArena" target="io.netty.buffer.PoolArena">
+      <point x="0.0" y="-14.0" />
+      <point x="72.5" y="131.0" />
+      <point x="118.75" y="131.0" />
+      <point x="-31.75" y="14.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="461.5" y="335.0" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

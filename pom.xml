@@ -329,6 +329,7 @@
     <module>testsuite-shading</module>
     <module>microbench</module>
     <module>bom</module>
+    <module>example-jannal</module>
   </modules>
 
   <dependencyManagement>
