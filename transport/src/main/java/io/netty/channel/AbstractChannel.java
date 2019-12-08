@@ -80,8 +80,10 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
      */
     protected AbstractChannel(Channel parent) {
         this.parent = parent;
+        // 创建Channel的唯一标识,通过ChannelId判断是否是同一个Channel
         id = newId();
         unsafe = newUnsafe();
+        //每一个Channle都会关联一个DefaultChannelPipeline
         pipeline = newChannelPipeline();
     }
 
@@ -464,22 +466,26 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
             if (eventLoop == null) {
                 throw new NullPointerException("eventLoop");
             }
+            //已经注册，则直接返回
             if (isRegistered()) {
                 promise.setFailure(new IllegalStateException("registered to an event loop already"));
                 return;
             }
+            //校验eventLoop与Channel是否兼容，由具体的子类Channel实现
             if (!isCompatible(eventLoop)) {
                 promise.setFailure(
                         new IllegalStateException("incompatible event loop type: " + eventLoop.getClass().getName()));
                 return;
             }
-
+            //设置Channel的eventLoop
             AbstractChannel.this.eventLoop = eventLoop;
 
+            //判断当前线程是否是eventLoop，如果是则直接注册，否则使用eventLoop注册
             if (eventLoop.inEventLoop()) {
                 register0(promise);
             } else {
                 try {
+                    //第一次启动时执行此处启动eventLoop线程
                     eventLoop.execute(new Runnable() {
                         @Override
                         public void run() {
@@ -500,23 +506,28 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
         private void register0(ChannelPromise promise) {
             try {
                 // check if the channel is still open as it could be closed in the mean time when the register
-                // call was outside of the eventLoop
+                // call was outside of the eventloop
                 if (!promise.setUncancellable() || !ensureOpen(promise)) {
                     return;
                 }
+                //记录是否为首次register
                 boolean firstRegistration = neverRegistered;
+                //不同的Channel子类来实现注册自己的注册逻辑
                 doRegister();
                 neverRegistered = false;
                 registered = true;
 
                 // Ensure we call handlerAdded(...) before we actually notify the promise. This is needed as the
                 // user may already fire events through the pipeline in the ChannelFutureListener.
+                //在通知promise之前调用handlerAdded，因为用户有可能在ChannelFutureListener通过pipeline fire事件
                 pipeline.invokeHandlerAddedIfNeeded();
-
+                //执行成功，通知promise
                 safeSetSuccess(promise);
+                //触发通知已注册事件
                 pipeline.fireChannelRegistered();
                 // Only fire a channelActive if the channel has never been registered. This prevents firing
                 // multiple channel actives if the channel is deregistered and re-registered.
+                //如果从Channel从未被注册，则触发channelActive事件。避免由于Channel已经注销而重新注册导致再次调用channelActive
                 if (isActive()) {
                     if (firstRegistration) {
                         pipeline.fireChannelActive();

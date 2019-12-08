@@ -317,7 +317,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
     /**
      * 1. 新建一个Channel ，对于NioServerSocketChannel来说其实就是new NioServerSocketChannel()，只不过是通过反射创建的(ReflectiveChannelFactory)
      * 2. init Channel
-     * 3
+     * 3. 注册 Channel 到 EventLoopGroup 中,如果注册失败则关闭channel
      */
     final ChannelFuture initAndRegister() {
         Channel channel = null;
@@ -334,7 +334,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
             // as the Channel is not registered yet we need to force the usage of the GlobalEventExecutor
             return new DefaultChannelPromise(new FailedChannel(), GlobalEventExecutor.INSTANCE).setFailure(t);
         }
-
+        //注册 Channel 到 EventLoopGroup 中
         ChannelFuture regFuture = config().group().register(channel);
         if (regFuture.cause() != null) {
             if (channel.isRegistered()) {

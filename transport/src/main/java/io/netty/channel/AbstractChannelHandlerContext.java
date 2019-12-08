@@ -125,6 +125,7 @@ abstract class AbstractChannelHandlerContext extends DefaultAttributeMap
 
     @Override
     public ChannelHandlerContext fireChannelRegistered() {
+        //findContextInbound会向后获得第一个ChannelInboundHandler
         invokeChannelRegistered(findContextInbound());
         return this;
     }
@@ -146,6 +147,7 @@ abstract class AbstractChannelHandlerContext extends DefaultAttributeMap
     private void invokeChannelRegistered() {
         if (invokeHandler()) {
             try {
+                //调用ChannelInboundHandler的channelRegistered方法
                 ((ChannelInboundHandler) handler()).channelRegistered(this);
             } catch (Throwable t) {
                 notifyHandlerException(t);
@@ -1005,15 +1007,18 @@ abstract class AbstractChannelHandlerContext extends DefaultAttributeMap
     }
 
     /**
+     * 检测是否已经调用ChannelHandler#handlerAdded，如果已经调用返回false，否则返回true
      * Makes best possible effort to detect if {@link ChannelHandler#handlerAdded(ChannelHandlerContext)} was called
      * yet. If not return {@code false} and if called or could not detect return {@code true}.
-     *
+     * 如果返回false，将不再调用ChannelHandler，而只是转发事件，
+     * 因为DefaultChannelPipeline可能已将ChannelHandler放在链表中但未被调用
      * If this method returns {@code false} we will not invoke the {@link ChannelHandler} but just forward the event.
      * This is needed as {@link DefaultChannelPipeline} may already put the {@link ChannelHandler} in the linked-list
      * but not called {@link ChannelHandler#handlerAdded(ChannelHandlerContext)}.
      */
     private boolean invokeHandler() {
         // Store in local variable to reduce volatile reads.
+        //这种优化再并发包里很常见，会减少字节码，但是一般JIT编译器可以自动优化，所以这种级别的优化没啥意义
         int handlerState = this.handlerState;
         return handlerState == ADD_COMPLETE || (!ordered && handlerState == ADD_PENDING);
     }
