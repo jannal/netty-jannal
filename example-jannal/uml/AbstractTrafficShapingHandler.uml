@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>io.netty.handler.traffic.AbstractTrafficShapingHandler</OriginalElement>
+  <nodes>
+    <node x="351.5" y="243.0">io.netty.channel.ChannelDuplexHandler</node>
+    <node x="631.0" y="405.0">io.netty.handler.traffic.GlobalChannelTrafficShapingHandler</node>
+    <node x="53.72727272727269" y="81.0">io.netty.channel.ChannelHandlerAdapter</node>
+    <node x="311.0" y="324.0">io.netty.handler.traffic.AbstractTrafficShapingHandler</node>
+    <node x="567.7272727272727" y="81.0">io.netty.channel.ChannelOutboundHandler</node>
+    <node x="0.0" y="405.0">io.netty.handler.traffic.ChannelTrafficShapingHandler</node>
+    <node x="150.7272727272727" y="162.0">io.netty.channel.ChannelInboundHandlerAdapter</node>
+    <node x="310.7272727272727" y="81.0">io.netty.channel.ChannelInboundHandler</node>
+    <node x="338.75" y="0.0">io.netty.channel.ChannelHandler</node>
+    <node x="320.0" y="405.0">io.netty.handler.traffic.GlobalTrafficShapingHandler</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="io.netty.channel.ChannelOutboundHandler" target="io.netty.channel.ChannelHandler">
+      <point x="0.0" y="-15.5" />
+      <point x="690.7272727272727" y="56.0" />
+      <point x="483.75" y="56.0" />
+      <point x="58.0" y="15.5" />
+    </edge>
+    <edge source="io.netty.handler.traffic.ChannelTrafficShapingHandler" target="io.netty.handler.traffic.AbstractTrafficShapingHandler">
+      <point x="0.0" y="-15.5" />
+      <point x="150.0" y="380.0" />
+      <point x="362.5" y="380.0" />
+      <point x="-103.0" y="15.5" />
+    </edge>
+    <edge source="io.netty.handler.traffic.GlobalChannelTrafficShapingHandler" target="io.netty.handler.traffic.AbstractTrafficShapingHandler">
+      <point x="0.0" y="-15.5" />
+      <point x="808.0" y="380.0" />
+      <point x="568.5" y="380.0" />
+      <point x="103.0" y="15.5" />
+    </edge>
+    <edge source="io.netty.channel.ChannelInboundHandler" target="io.netty.channel.ChannelHandler">
+      <point x="0.0" y="-15.5" />
+      <point x="429.2272727272727" y="56.0" />
+      <point x="425.75" y="56.0" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="io.netty.handler.traffic.GlobalTrafficShapingHandler" target="io.netty.handler.traffic.AbstractTrafficShapingHandler">
+      <point x="0.0" y="-15.5" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="io.netty.channel.ChannelInboundHandlerAdapter" target="io.netty.channel.ChannelHandlerAdapter">
+      <point x="-75.0" y="-15.5" />
+      <point x="225.7272727272727" y="137.0" />
+      <point x="172.2272727272727" y="137.0" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="io.netty.channel.ChannelInboundHandlerAdapter" target="io.netty.channel.ChannelInboundHandler">
+      <point x="75.0" y="-15.5" />
+      <point x="375.7272727272727" y="137.0" />
+      <point x="429.2272727272727" y="137.0" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="io.netty.channel.ChannelDuplexHandler" target="io.netty.channel.ChannelInboundHandlerAdapter">
+      <point x="-57.0" y="-15.5" />
+      <point x="408.5" y="218.0" />
+      <point x="300.7272727272727" y="218.0" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="io.netty.handler.traffic.AbstractTrafficShapingHandler" target="io.netty.channel.ChannelDuplexHandler">
+      <point x="0.0" y="-15.5" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="io.netty.channel.ChannelDuplexHandler" target="io.netty.channel.ChannelOutboundHandler">
+      <point x="57.0" y="-15.5" />
+      <point x="522.5" y="218.0" />
+      <point x="690.7272727272727" y="218.0" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="io.netty.channel.ChannelHandlerAdapter" target="io.netty.channel.ChannelHandler">
+      <point x="0.0" y="-15.5" />
+      <point x="172.2272727272727" y="56.0" />
+      <point x="367.75" y="56.0" />
+      <point x="-58.0" y="15.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="310.5" y="177.5" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

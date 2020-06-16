@@ -120,16 +120,26 @@ public class FlushConsolidationHandler extends ChannelDuplexHandler {
         this.ctx = ctx;
     }
 
+    /*
+     * 同步: read->writeAndFlush-> readComplete
+     * 异步: read->readComplete-> writeAndFlush
+     * readProgress
+     */
     @Override
     public void flush(ChannelHandlerContext ctx) throws Exception {
+        // 根据业务线程是否服用IO线程两种情况来考虑
+        //服用情况，正在读的时候
         if (readInProgress) {
             // If there is still a read in progress we are sure we will see a channelReadComplete(...) call. Thus
             // we only need to flush if we reach the explicitFlushAfterFlushes limit.
+            //每explicitFlushAfterFlushes个批量flush一次
+            //如果定义了5次，但是发生了6次，ChannelReadComplete会flush后面的
             if (++flushPendingCount == explicitFlushAfterFlushes) {
                 flushNow(ctx);
             }
-        } else if (consolidateWhenNoReadInProgress) {
+        } else if (consolidateWhenNoReadInProgress) { //异步情况
             // Flush immediately if we reach the threshold, otherwise schedule
+            //业务异步化情况，开启consolidateWhenNoReadInProgress时优化flush
             if (++flushPendingCount == explicitFlushAfterFlushes) {
                 flushNow(ctx);
             } else {
