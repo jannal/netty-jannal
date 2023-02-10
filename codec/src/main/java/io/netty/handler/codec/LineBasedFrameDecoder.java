@@ -36,16 +36,21 @@ import java.util.List;
 public class LineBasedFrameDecoder extends ByteToMessageDecoder {
 
     /** Maximum length of a frame we're willing to decode.  */
+    // 消息的最大长度
     private final int maxLength;
     /** Whether or not to throw an exception as soon as we exceed maxLength. */
+    // 超出最大长度是否抛出异常
     private final boolean failFast;
+    // 是否跳过分隔符
     private final boolean stripDelimiter;
 
     /** True if we're discarding input because we're already over maxLength.  */
     private boolean discarding;
+    // 丢弃字节的长度
     private int discardedBytes;
 
     /** Last scan position. */
+    // 偏移量
     private int offset;
 
     /**
@@ -96,28 +101,40 @@ public class LineBasedFrameDecoder extends ByteToMessageDecoder {
      *                          be created.
      */
     protected Object decode(ChannelHandlerContext ctx, ByteBuf buffer) throws Exception {
+        // 查找行尾，返回\n或者\r的位置，假设消息为 "abcedf\r\n"  整体length=8  那么eol=6
         final int eol = findEndOfLine(buffer);
+        // 正常情况discarding=false
         if (!discarding) {
+            // 存在结尾
             if (eol >= 0) {
                 final ByteBuf frame;
+                // 结尾位置 - 读指针位置  = 有效数据长度
                 final int length = eol - buffer.readerIndex();
+                // 如果当前索引下指向的是\r证明是以\r\n开头的   结尾数据占两个字节否则占用一个
                 final int delimLength = buffer.getByte(eol) == '\r'? 2 : 1;
-
+                // 如果有效数据长度大于预设长度进行报错和丢弃
                 if (length > maxLength) {
+                    // 重新指定读指针的位置
                     buffer.readerIndex(eol + delimLength);
+                    // 进行报错
                     fail(ctx, length);
                     return null;
                 }
-
+                // 是否丢弃换行符
                 if (stripDelimiter) {
+                    // 如果设置为丢弃 则从当前都指针位置切片 并增加引用计数
+                    // 相当于调用了readSlice().retain()
                     frame = buffer.readRetainedSlice(length);
+                    // 跳过换行符  \n跳过一个  \r\n跳过两个
                     buffer.skipBytes(delimLength);
                 } else {
+                    // 从当前的读指针位置读取  有效数据长度+换行数据长度的位置
                     frame = buffer.readRetainedSlice(length + delimLength);
                 }
-
+                // 返回这个切片
                 return frame;
             } else {
+                // 当前有效数据
                 final int length = buffer.readableBytes();
                 if (length > maxLength) {
                     discardedBytes = length;
@@ -128,19 +145,27 @@ public class LineBasedFrameDecoder extends ByteToMessageDecoder {
                         fail(ctx, "over " + discardedBytes);
                     }
                 }
+                // 不做处理
                 return null;
             }
         } else {
             if (eol >= 0) {
+                // discardedBytes是之前记录需要丢弃的字节数   [eol - buffer.readerIndex()]是分隔符前面的字节数
                 final int length = discardedBytes + eol - buffer.readerIndex();
+                // 分隔符长度
                 final int delimLength = buffer.getByte(eol) == '\r'? 2 : 1;
+                // 丢弃分隔符之前的字节（包括分隔符)
                 buffer.readerIndex(eol + delimLength);
+                // 重置标记变量
                 discardedBytes = 0;
                 discarding = false;
+                // 抛异常
                 if (!failFast) {
                     fail(ctx, length);
                 }
             } else {
+                // 没找到分隔符
+                // 增加discardedBytes的值 然后继续丢弃字节
                 discardedBytes += buffer.readableBytes();
                 buffer.readerIndex(buffer.writerIndex());
                 // We skip everything in the buffer, we need to set the offset to 0 again.
@@ -165,14 +190,20 @@ public class LineBasedFrameDecoder extends ByteToMessageDecoder {
      * Returns -1 if no end of line was found in the buffer.
      */
     private int findEndOfLine(final ByteBuf buffer) {
+        // 获取可读字节的长度
         int totalLength = buffer.readableBytes();
+        // 从当前读指针+偏移量的位置查询到最大可读数-偏移量的位置  查询\n
         int i = buffer.forEachByte(buffer.readerIndex() + offset, totalLength - offset, ByteProcessor.FIND_LF);
+        // 如果存在\n
         if (i >= 0) {
+            // 初始化偏移量
             offset = 0;
+            // 如果换行符的前一位是\r 就返回\r的位置
             if (i > 0 && buffer.getByte(i - 1) == '\r') {
                 i--;
             }
         } else {
+            // 没查询到就记录一个当前的偏移量将偏移量移动到数据末尾等待下一次数据过来再读
             offset = totalLength;
         }
         return i;

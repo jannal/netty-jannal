@@ -817,7 +817,9 @@ public final class NioEventLoop extends SingleThreadEventLoop {
             for (;;) {
                 //如果延迟任务队列第一个任务延迟的时间小于500000纳秒(0.5ms)
                 long timeoutMillis = (selectDeadLineNanos - currentTimeNanos + 500000L) / 1000000L;
+                //已经触发或者超时
                 if (timeoutMillis <= 0) {
+                    //如果之前未执行过select，则调用非阻塞的selectNow()方法
                     if (selectCnt == 0) {
                         selector.selectNow();
                         selectCnt = 1;
@@ -829,6 +831,8 @@ public final class NioEventLoop extends SingleThreadEventLoop {
                 // Selector#wakeup. So we need to check task queue again before executing select operation.
                 // If we don't, the task might be pended until select operation was timed out.
                 // It might be pended until idle timeout if IdleStateHandler existed in pipeline.
+                // 当任务队列中有任务，且预唤醒标志位false时，需要调用selectNow()方法
+                // 否则任务得不到及时处理，可能需要阻塞等待超时
                 if (hasTasks() && wakenUp.compareAndSet(false, true)) {
                     selector.selectNow();
                     selectCnt = 1;

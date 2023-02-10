@@ -44,8 +44,9 @@ import io.netty.util.internal.TypeParameterMatcher;
  * </pre>
  */
 public abstract class MessageToByteEncoder<I> extends ChannelOutboundHandlerAdapter {
-
+    // TypeParameterMatcher用于检测泛型参数是否是期待的类型
     private final TypeParameterMatcher matcher;
+    // 是否使用堆外DirectedByteBuf，默认为true
     private final boolean preferDirect;
 
     /**
@@ -99,24 +100,32 @@ public abstract class MessageToByteEncoder<I> extends ChannelOutboundHandlerAdap
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
         ByteBuf buf = null;
         try {
+            // msg是I这种类型就调用编码逻辑，否则向下传递
             if (acceptOutboundMessage(msg)) {
+                // 类型转换
                 @SuppressWarnings("unchecked")
                 I cast = (I) msg;
+                // 分配ByteBuf，默认堆外类型
                 buf = allocateBuffer(ctx, cast, preferDirect);
                 try {
+                    // 子类实现编码逻辑
                     encode(ctx, cast, buf);
                 } finally {
+                    // 释放msg
                     ReferenceCountUtil.release(cast);
                 }
-
+                // 如果buf可读，则写入ctx，实际就是交给netty调用底层socket输出
                 if (buf.isReadable()) {
                     ctx.write(buf, promise);
                 } else {
+                    // 如果没有写入数据（比如自定义编码错误），则释放buf
                     buf.release();
+                    // 向下传递空的buf对象
                     ctx.write(Unpooled.EMPTY_BUFFER, promise);
                 }
                 buf = null;
             } else {
+                // 如果不是I类型，则次编码器不做任何处理，直接传递msg对象给下一个编码器
                 ctx.write(msg, promise);
             }
         } catch (EncoderException e) {
@@ -125,6 +134,7 @@ public abstract class MessageToByteEncoder<I> extends ChannelOutboundHandlerAdap
             throw new EncoderException(e);
         } finally {
             if (buf != null) {
+                // 释放buffer
                 buf.release();
             }
         }
@@ -137,6 +147,7 @@ public abstract class MessageToByteEncoder<I> extends ChannelOutboundHandlerAdap
     protected ByteBuf allocateBuffer(ChannelHandlerContext ctx, @SuppressWarnings("unused") I msg,
                                boolean preferDirect) throws Exception {
         if (preferDirect) {
+            // 堆外内存
             return ctx.alloc().ioBuffer();
         } else {
             return ctx.alloc().heapBuffer();
